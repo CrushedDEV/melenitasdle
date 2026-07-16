@@ -1,0 +1,24 @@
+{
+  "name": "melenitasdle",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Juego tipo Heardle para adivinar clips de Twitch y YouTube Shorts de un creador de contenido.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^14.2.35",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.10",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "typescript": "5.5.3"
+  }
+}
