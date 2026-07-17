@@ -275,6 +275,49 @@ const RAW_CLIPS: RawClip[] = [
   },
 
     //Clips twitch mele
+
+        {
+    url: "https://www.twitch.tv/melenitasdev/clip/SwissPlumpTurnipLeeroyJenkins-g2fH6UbB0VdycM-6?filter=clips&range=7d",
+    answer: "Que susto coño 2.0",
+  },
+          {
+    url: "https://www.twitch.tv/melenitasdev/clip/GrotesqueElatedSkirretTF2John-9Cs4jKCBa5-wqu_g?filter=clips&range=all",
+    answer: "Cancelación definitiva final final esta vez si.mp4",
+  },
+          {
+    url: "https://www.twitch.tv/melenitasdev/clip/DeafBlushingCattleMikeHogu-BFDUNv2rhv_9Ah3l?filter=clips&range=all",
+    answer: "A ver si trabajas",
+  },
+          {
+    url: "https://www.twitch.tv/melenitasdev/clip/TiredVivaciousBeefShazBotstix-80E8Yt2iSxl8yKLt?filter=clips&range=all",
+    answer: "Melenitas págame estafador",
+  },
+          {
+    url: "https://www.twitch.tv/melenitasdev/clip/HilariousBenevolentOpossumThunBeast-wWnqjDEKftwPWZ23?filter=clips&range=all",
+    answer: "mele???",
+  },
+          {
+    url: "https://www.twitch.tv/melenitasdev/clip/BenevolentEagerFlyPermaSmug-7QFlH26pMsA_EQ0y?filter=clips&range=all",
+    answer: "Que son unos cargo",
+  },
+          {
+    url: "https://www.twitch.tv/melenitasdev/clip/TawdryDreamySandwichOneHand-waWTRM0LbNANKe5f?filter=clips&range=all",
+    answer: "cayendo",
+  },
+          {
+    url: "https://www.twitch.tv/melenitasdev/clip/HyperAliveMuleDoubleRainbow-NhfNEIxmEmUs9lrj?filter=clips&range=all",
+    answer: "Eva cumshot",
+  },
+            {
+    url: "https://www.twitch.tv/melenitasdev/clip/FurryColdRaisinFeelsBadMan-lz7g0SICZLs7Ptqy?filter=clips&range=all",
+    answer: "Olaf = Melenitas",
+  },
+              {
+    url: "https://www.twitch.tv/melenitasdev/clip/WealthyMoldyDiamondWow-nJcroIIy0yLXhXoP",
+    answer: "me la agarras con la mano?",
+  },
+
+
 ];
 
 /**
