@@ -137,6 +137,9 @@ export default function Game() {
   useEffect(() => {
     const seen = window.localStorage.getItem("melenitasdle:welcome-seen");
     if (!seen) setShowWelcome(true);
+    // Recupera el canal de Twitch guardado para prerellenar el campo.
+    const savedChannel = window.localStorage.getItem("melenitasdle:twitch-channel");
+    if (savedChannel) setChannelInput(savedChannel);
   }, []);
 
   function closeWelcome() {
@@ -239,6 +242,8 @@ export default function Game() {
     });
     twitchRef.current = chat;
     setTwitchChannel(ch);
+    // Recuerda el canal para la próxima vez.
+    window.localStorage.setItem("melenitasdle:twitch-channel", ch);
     chat.connect();
     setShowTwitchModal(false);
   }
@@ -693,9 +698,10 @@ export default function Game() {
                     }`}
                     disabled={status === "playing"}
                     onClick={() => {
+                      // Cambiar de categoría NO sale del modo streamer; solo
+                      // reinicia la ronda para usar el nuevo catálogo.
                       playerRef.current?.stop();
                       setPlaying(false);
-                      setStreamerMode(false);
                       setStreamerStarted(false);
                       setPollActive(false);
                       setPollRevealed(false);

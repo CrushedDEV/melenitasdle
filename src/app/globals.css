@@ -1454,10 +1454,25 @@ body {
   background: var(--surface-2);
 }
 .mode-tab.mode-plagiosdev.active::after {
-  background: linear-gradient(180deg, #2a2140, #201a30);
+  background: linear-gradient(
+    90deg,
+    #ff004c,
+    #ff8a00,
+    #ffe600,
+    #00ff66,
+    #00e0ff,
+    #6a00ff,
+    #ff00c8,
+    #ff004c
+  );
+  background-size: 300% 100%;
+  animation: rainbow-move 3s linear infinite;
+  opacity: 0.9;
 }
 .mode-tab.mode-plagiosdev.active {
-  box-shadow: 0 0 22px -4px rgba(160, 90, 255, 0.5);
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 26px -3px rgba(160, 90, 255, 0.7);
 }
 @keyframes rainbow-move {
   to {
