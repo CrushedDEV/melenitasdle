@@ -1,18 +1,30 @@
 import { NextResponse } from "next/server";
-import { addScore, topScores } from "@/lib/store";
+import { addScore, topScores, usingRedis } from "@/lib/store";
 import type { GameMode } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 // GET /api/scores?limit=10 -> tabla de puntuaciones (leaderboard).
+// Incluye `storage` para diagnosticar: "redis" (persistente) o "file" (local).
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const limit = Math.min(Number(searchParams.get("limit")) || 10, 100);
-  const scores = await topScores(limit);
-  return NextResponse.json({ scores });
+  try {
+    const scores = await topScores(limit);
+    return NextResponse.json({
+      scores,
+      storage: usingRedis ? "redis" : "file",
+    });
+  } catch (e) {
+    console.error("[scores] GET error", e);
+    return NextResponse.json(
+      { scores: [], storage: usingRedis ? "redis" : "file", error: "read_failed" },
+      { status: 200 },
+    );
+  }
 }
 
-// POST /api/scores -> guarda una puntuación.
+// POST /api/scores -> guarda (upsert) la puntuación del jugador.
 export async function POST(request: Request) {
   let body: unknown;
   try {
@@ -21,11 +33,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
   }
 
-  const { player, score, mode, daily } = (body ?? {}) as {
+  const { player, score, mode } = (body ?? {}) as {
     player?: unknown;
     score?: unknown;
     mode?: unknown;
-    daily?: unknown;
   };
 
   const validModes: GameMode[] = ["twitch", "youtube", "mixed", "plagiosdev"];
@@ -41,12 +52,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   }
 
-  const saved = await addScore({
-    player: player.trim().slice(0, 24),
-    score: Math.round(score),
-    mode: mode as GameMode,
-    daily: Boolean(daily),
-  });
-
-  return NextResponse.json({ entry: saved }, { status: 201 });
+  try {
+    const saved = await addScore({
+      player: player.trim().slice(0, 24),
+      score: Math.round(score),
+      mode: mode as GameMode,
+      daily: false,
+    });
+    return NextResponse.json({ entry: saved }, { status: 201 });
+  } catch (e) {
+    console.error("[scores] POST error", e);
+    // Sin Redis en producción (Vercel) el disco es de solo lectura -> no persiste.
+    return NextResponse.json(
+      {
+        error: usingRedis
+          ? "No se pudo guardar en Redis."
+          : "Ranking no configurado: falta un Redis (Vercel KV/Upstash).",
+        storage: usingRedis ? "redis" : "file",
+      },
+      { status: 503 },
+    );
+  }
 }

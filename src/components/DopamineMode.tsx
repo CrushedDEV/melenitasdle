@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** Elige dos vídeos al azar (distintos si hay suficientes). */
+// Vídeos del modo dopamina (YouTube). Añade/edita IDs aquí.
+const YT_IDS = ["XBIaqOm0RKQ", "i0M4ARe9v0Y"];
+
+/** Elige dos vídeos (distintos si hay suficientes). */
 function pickTwo(list: string[]): [string, string] | null {
   if (list.length === 0) return null;
   if (list.length === 1) return [list[0], list[0]];
@@ -12,85 +15,85 @@ function pickTwo(list: string[]): [string, string] | null {
   return [list[a], list[b]];
 }
 
+function embedSrc(id: string): string {
+  const p = new URLSearchParams({
+    enablejsapi: "1",
+    autoplay: "0",
+    mute: "1",
+    loop: "1",
+    playlist: id,
+    controls: "0",
+    disablekb: "1",
+    modestbranding: "1",
+    playsinline: "1",
+    rel: "0",
+    fs: "0",
+  });
+  return `https://www.youtube.com/embed/${id}?${p.toString()}`;
+}
+
+function command(iframe: HTMLIFrameElement | null, func: "playVideo" | "pauseVideo") {
+  iframe?.contentWindow?.postMessage(
+    JSON.stringify({ event: "command", func, args: [] }),
+    "*",
+  );
+}
+
 /**
- * Modo dopamina: dos vídeos verticales que entran desde los lados con animación,
- * en bucle y sin sonido. Al desactivar salen por donde entraron.
- *
- * Los vídeos se montan (fuera de pantalla) y se PRECARGAN en cuanto hay lista,
- * antes de pulsar el botón: así la animación de entrada es instantánea y no se
- * ve el negro inicial. Cada vez que se cierra se prepara un par nuevo aleatorio
- * (que queda precargado para la siguiente activación).
+ * Modo dopamina: dos vídeos verticales de YouTube que entran desde los lados,
+ * en bucle y sin sonido. Los iframes se montan (y precargan el reproductor) al
+ * cargar la página; se reproducen al activar y se pausan al salir, así la
+ * animación de entrada es instantánea y no gastan datos mientras están ocultos.
  */
-export default function DopamineMode({
-  active,
-  videos,
-}: {
-  active: boolean;
-  videos: string[];
-}) {
+export default function DopamineMode({ active }: { active: boolean }) {
   const [picks, setPicks] = useState<[string, string] | null>(null);
-  const leftRef = useRef<HTMLVideoElement>(null);
-  const rightRef = useRef<HTMLVideoElement>(null);
-  const activeRef = useRef(active);
-  const wasActive = useRef(false);
-  activeRef.current = active;
-
-  // Elige el primer par en cuanto llega la lista (para precargarlo ya).
-  useEffect(() => {
-    if (videos.length && !picks) setPicks(pickTwo(videos));
-  }, [videos, picks]);
+  const leftRef = useRef<HTMLIFrameElement>(null);
+  const rightRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
+    setPicks(pickTwo(YT_IDS));
+  }, []);
+
+  useEffect(() => {
+    if (!picks) return;
     if (active) {
-      leftRef.current?.play().catch(() => {});
-      rightRef.current?.play().catch(() => {});
-      wasActive.current = true;
+      // Reintenta el play unas veces por si el reproductor aún no está listo.
+      let n = 0;
+      const send = () => {
+        command(leftRef.current, "playVideo");
+        command(rightRef.current, "playVideo");
+        if (++n < 6) window.setTimeout(send, 220);
+      };
+      send();
     } else {
-      // Tras la animación de salida: pausa y prepara un par nuevo (precargado).
       const t = window.setTimeout(() => {
-        leftRef.current?.pause();
-        rightRef.current?.pause();
-        if (wasActive.current && videos.length) setPicks(pickTwo(videos));
-      }, 650);
+        command(leftRef.current, "pauseVideo");
+        command(rightRef.current, "pauseVideo");
+      }, 600);
       return () => window.clearTimeout(t);
     }
-  }, [active, videos]);
-
-  // Decodifica el primer frame en segundo plano (evita el flash negro).
-  function warm(el: HTMLVideoElement | null) {
-    if (!el) return;
-    el
-      .play()
-      .then(() => {
-        if (!activeRef.current) el.pause();
-      })
-      .catch(() => {});
-  }
+  }, [active, picks]);
 
   if (!picks) return null;
 
   return (
     <div className={`dopamine ${active ? "active" : ""}`} aria-hidden="true">
       <div className="dopa-vid left">
-        <video
+        <iframe
           ref={leftRef}
-          src={picks[0]}
-          muted
-          loop
-          playsInline
-          preload="auto"
-          onLoadedData={(e) => warm(e.currentTarget)}
+          src={embedSrc(picks[0])}
+          title=""
+          allow="autoplay; encrypted-media"
+          frameBorder="0"
         />
       </div>
       <div className="dopa-vid right">
-        <video
+        <iframe
           ref={rightRef}
-          src={picks[1]}
-          muted
-          loop
-          playsInline
-          preload="auto"
-          onLoadedData={(e) => warm(e.currentTarget)}
+          src={embedSrc(picks[1])}
+          title=""
+          allow="autoplay; encrypted-media"
+          frameBorder="0"
         />
       </div>
     </div>

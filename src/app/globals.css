@@ -1123,6 +1123,7 @@ body {
   bottom: 0;
   width: clamp(150px, 20vw, 300px);
   background: #000;
+  overflow: hidden;
   box-shadow: 0 0 60px -10px rgba(0, 0, 0, 0.9);
   transition: transform 0.55s cubic-bezier(0.22, 0.8, 0.24, 1);
 }
@@ -1140,11 +1141,18 @@ body {
 .dopamine.active .dopa-vid.right {
   transform: translateX(0);
 }
-.dopa-vid video {
-  width: 100%;
+/* El reproductor de YouTube es 16:9; lo escalamos para CUBRIR el panel
+   vertical (recortando los lados), centrado. */
+.dopa-vid iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   height: 100%;
-  object-fit: cover;
-  display: block;
+  width: 177.78vh; /* 16/9 respecto a la altura del panel (100vh) */
+  min-width: 100%;
+  border: 0;
+  pointer-events: none;
 }
 @media (max-width: 760px) {
   .dopa-vid {

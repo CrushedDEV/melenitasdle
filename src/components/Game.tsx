@@ -37,7 +37,6 @@ import {
   DotIcon,
   GamepadIcon,
   PlayIcon,
-  SaveIcon,
   SkipIcon,
   SpinnerIcon,
   TrophyIcon,
@@ -95,7 +94,6 @@ export default function Game() {
   }>({ aciertos: [], fallos: [], risedev: null });
 
   const [dopamine, setDopamine] = useState(false);
-  const [dopamineVideos, setDopamineVideos] = useState<string[]>([]);
   const [showPlagiosNotice, setShowPlagiosNotice] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
 
@@ -158,10 +156,6 @@ export default function Game() {
           risedev: d.risedev ?? null,
         }),
       )
-      .catch(() => {});
-    fetch("/api/dopamine")
-      .then((r) => r.json())
-      .then((d) => setDopamineVideos(d.videos ?? []))
       .catch(() => {});
   }, []);
 
@@ -478,10 +472,13 @@ export default function Game() {
   }
 
   function endRound(result: "won" | "lost", points: number) {
+    const newTotal = totalScore + points;
     setStatus(result);
     setLastPoints(points);
-    setTotalScore((s) => s + points);
+    setTotalScore(newTotal);
     setRounds((r) => r + 1);
+    // Guarda la puntuación automáticamente (sin pulsar botón).
+    autoSave(newTotal);
     // Revela y reproduce el clip entero.
     playFull();
   }
@@ -528,27 +525,22 @@ export default function Game() {
     }
   }
 
-  async function saveScore() {
-    if (!playerName.trim() || saveState === "saving") return;
+  // Autoguardado: se llama solo al terminar cada ronda con el total actualizado.
+  async function autoSave(total: number) {
+    if (!playerName.trim()) return;
     setSaveState("saving");
     try {
       const res = await fetch("/api/scores", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          player: playerName.trim(),
-          score: totalScore,
-          mode,
-        }),
+        body: JSON.stringify({ player: playerName.trim(), score: total, mode }),
       });
       if (!res.ok) throw new Error("save failed");
       setSaveState("saved");
       setLbKey((k) => k + 1);
-      notify("success", "Puntuación guardada en el ranking");
     } catch (e) {
       console.error(e);
       setSaveState("error");
-      notify("error", "No se pudo guardar la puntuación");
     }
   }
 
@@ -1114,30 +1106,23 @@ export default function Game() {
                   Siguiente clip <ArrowRightIcon size={16} />
                 </button>
 
-                {/* Guardar puntuación */}
-                <div style={{ height: 18 }} />
-                {saveState === "saved" ? (
+                {/* Autoguardado (sin botón) */}
+                <div style={{ height: 14 }} />
+                {saveState === "saving" && (
+                  <div className="statusline">
+                    <SpinnerIcon size={16} /> Guardando puntuación…
+                  </div>
+                )}
+                {saveState === "saved" && (
                   <div className="statusline ok">
                     <CheckIcon size={16} />
-                    <span>Puntuación guardada como {playerName}</span>
+                    <span>Guardado como {playerName} · {totalScore} pts</span>
                   </div>
-                ) : (
-                  <button
-                    className="btn btn-block"
-                    onClick={saveScore}
-                    disabled={!playerName.trim() || saveState === "saving"}
-                  >
-                    {saveState === "saving" ? (
-                      <>
-                        <SpinnerIcon size={16} /> Guardando…
-                      </>
-                    ) : (
-                      <>
-                        <SaveIcon size={16} /> Guardar {totalScore} pts como{" "}
-                        {playerName}
-                      </>
-                    )}
-                  </button>
+                )}
+                {saveState === "error" && (
+                  <div className="statusline" style={{ color: "var(--red-bright)" }}>
+                    <AlertIcon size={16} /> No se pudo guardar la puntuación
+                  </div>
                 )}
               </div>
             )}
@@ -1211,7 +1196,7 @@ export default function Game() {
 
       <Toasts toasts={toasts} />
       <Confetti fire={confettiFire} />
-      <DopamineMode active={dopamine} videos={dopamineVideos} />
+      <DopamineMode active={dopamine} />
 
       {/* Botón modo dopamina (esquina inferior derecha) */}
       <button
