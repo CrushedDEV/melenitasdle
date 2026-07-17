@@ -139,6 +139,44 @@ export function ArrowRightIcon({ size, className, strokeWidth }: IconProps) {
   );
 }
 
+export function TwitchIcon({ size, className, strokeWidth }: IconProps) {
+  return (
+    <svg {...base(size, strokeWidth)} className={className} aria-hidden="true">
+      <path d="M4 3h16v11l-4 4h-4l-3 3H7v-3H4V3z" />
+      <line x1="10" y1="8" x2="10" y2="12" />
+      <line x1="15" y1="8" x2="15" y2="12" />
+    </svg>
+  );
+}
+
+export function LiveIcon({ size, className, strokeWidth }: IconProps) {
+  return (
+    <svg {...base(size, strokeWidth)} className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
+      <path d="M6.3 6.3a8 8 0 0 0 0 11.4M17.7 6.3a8 8 0 0 1 0 11.4" />
+    </svg>
+  );
+}
+
+export function EyeIcon({ size, className, strokeWidth }: IconProps) {
+  return (
+    <svg {...base(size, strokeWidth)} className={className} aria-hidden="true">
+      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+export function UsersIcon({ size, className, strokeWidth }: IconProps) {
+  return (
+    <svg {...base(size, strokeWidth)} className={className} aria-hidden="true">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
 export function ZapIcon({ size, className, strokeWidth }: IconProps) {
   return (
     <svg {...base(size, strokeWidth)} className={className} aria-hidden="true">

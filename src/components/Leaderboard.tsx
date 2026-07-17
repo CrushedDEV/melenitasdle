@@ -8,6 +8,7 @@ const MODE_LABEL: Record<string, string> = {
   twitch: "Twitch",
   youtube: "YouTube",
   mixed: "Mixto",
+  plagiosdev: "Plagios Dev",
 };
 
 export default function Leaderboard({ refreshKey }: { refreshKey: number }) {

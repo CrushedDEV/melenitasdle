@@ -1,5 +1,5 @@
-import Game from "@/components/Game";
+import AppGate from "@/components/AppGate";
 
 export default function Home() {
-  return <Game />;
+  return <AppGate />;
 }

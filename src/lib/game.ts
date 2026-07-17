@@ -8,8 +8,13 @@ export const MAX_ATTEMPTS = DURATIONS.length;
 
 /** Filtra los clips según el modo de juego elegido. */
 export function clipsForMode(clips: Clip[], mode: GameMode): Clip[] {
-  if (mode === "mixed") return clips;
-  return clips.filter((c) => c.type === mode);
+  if (mode === "plagiosdev") {
+    return clips.filter((c) => c.collection === "plagiosdev");
+  }
+  // El resto de modos usan solo la colección principal (no Plagios Dev).
+  const main = clips.filter((c) => c.collection !== "plagiosdev");
+  if (mode === "mixed") return main;
+  return main.filter((c) => c.type === mode);
 }
 
 /**
@@ -40,6 +45,16 @@ export function dailyClip<T>(items: T[], date = new Date()): T {
 /** Elige un elemento aleatorio. */
 export function randomItem<T>(items: T[]): T {
   return items[Math.floor(Math.random() * items.length)];
+}
+
+/** Devuelve una copia barajada (Fisher–Yates). */
+export function shuffle<T>(items: T[]): T[] {
+  const a = [...items];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
 /**

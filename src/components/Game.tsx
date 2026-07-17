@@ -6,24 +6,27 @@ import {
   DURATIONS,
   MAX_ATTEMPTS,
   clipsForMode,
-  dailyClip,
   isCorrectGuess,
   randomItem,
   randomStart,
   scoreForAttempt,
+  shuffle,
 } from "@/lib/game";
 import { createPlayer, type ClipPlayer } from "@/lib/players";
+import { TwitchChat, type ChatStatus } from "@/lib/twitchChat";
 import GuessInput from "./GuessInput";
 import Leaderboard from "./Leaderboard";
 import Toasts, { useToasts } from "./Toasts";
 import Confetti from "./Confetti";
 import DopamineMode from "./DopamineMode";
+import Modal from "./Modal";
+import WelcomeModal from "./WelcomeModal";
+import StreamerPoll, { type PollOption } from "./StreamerPoll";
 import {
   playError,
   playFile,
   playRandom,
   playSuccess,
-  setSfxMuted,
   setSfxVolume,
 } from "@/lib/sfx";
 import {
@@ -39,8 +42,12 @@ import {
   SpinnerIcon,
   TrophyIcon,
   VolumeIcon,
-  VolumeMuteIcon,
   ZapIcon,
+  TwitchIcon,
+  LiveIcon,
+  EyeIcon,
+  UsersIcon,
+  InfoIcon,
 } from "./Icon";
 
 type Status = "loading" | "error" | "ready" | "playing" | "won" | "lost";
@@ -55,6 +62,7 @@ const MODES: { id: GameMode; label: string }[] = [
   { id: "mixed", label: "Mixto" },
   { id: "twitch", label: "Twitch" },
   { id: "youtube", label: "YouTube" },
+  { id: "plagiosdev", label: "Plagios Dev" },
 ];
 
 const MAX_SECONDS = DURATIONS[DURATIONS.length - 1];
@@ -63,7 +71,6 @@ export default function Game() {
   const [allClips, setAllClips] = useState<Clip[]>([]);
   const [status, setStatus] = useState<Status>("loading");
   const [mode, setMode] = useState<GameMode>("mixed");
-  const [daily, setDaily] = useState(false);
 
   const [clip, setClip] = useState<Clip | null>(null);
   const [roundId, setRoundId] = useState(0);
@@ -81,7 +88,6 @@ export default function Game() {
 
   const [feedback, setFeedback] = useState<"error" | "success" | null>(null);
   const [confettiFire, setConfettiFire] = useState(0);
-  const [soundOn, setSoundOn] = useState(true);
   const [sounds, setSounds] = useState<{
     aciertos: string[];
     fallos: string[];
@@ -90,6 +96,34 @@ export default function Game() {
 
   const [dopamine, setDopamine] = useState(false);
   const [dopamineVideos, setDopamineVideos] = useState<string[]>([]);
+  const [showPlagiosNotice, setShowPlagiosNotice] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  // --- Modo streamer (chat de Twitch juega) ---
+  const [twitchStatus, setTwitchStatus] = useState<ChatStatus>("idle");
+  const [twitchChannel, setTwitchChannel] = useState("");
+  const [showTwitchModal, setShowTwitchModal] = useState(false);
+  const [channelInput, setChannelInput] = useState("");
+  const [streamerMode, setStreamerMode] = useState(false);
+  const [pollSize, setPollSize] = useState(4);
+  const [poll, setPoll] = useState<PollOption[]>([]);
+  const [voteCounts, setVoteCounts] = useState<number[]>([]);
+  const [pollActive, setPollActive] = useState(false);
+  const [pollRevealed, setPollRevealed] = useState(false);
+  const [streamerStarted, setStreamerStarted] = useState(false);
+  const [streamerSegment, setStreamerSegment] = useState(0);
+  const [chatWins, setChatWins] = useState(0);
+  const [chatRounds, setChatRounds] = useState(0);
+  const [chatCorrect, setChatCorrect] = useState<boolean | null>(null);
+
+  const twitchRef = useRef<TwitchChat | null>(null);
+  const votesRef = useRef<Map<string, number>>(new Map());
+  const streamerModeRef = useRef(false);
+  const pollActiveRef = useRef(false);
+  const pollLenRef = useRef(0);
+  streamerModeRef.current = streamerMode;
+  pollActiveRef.current = pollActive;
+  pollLenRef.current = poll.length;
   const [clipVolume, setClipVolume] = useState(0.8);
   const [sfxVolume, setSfxVolumeState] = useState(0.7);
 
@@ -100,14 +134,19 @@ export default function Game() {
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { toasts, notify } = useToasts();
 
-  /* --------------------------- sonido (sfx) ----------------------------- */
+  // Bienvenida: se muestra la primera vez que se entra al juego (tras el
+  // Wordle de acceso). Se recuerda para no volver a mostrarla sola.
   useEffect(() => {
-    const saved = window.localStorage.getItem("melenitasdle:sound");
-    const on = saved === null ? true : saved === "1";
-    setSoundOn(on);
-    setSfxMuted(!on);
+    const seen = window.localStorage.getItem("melenitasdle:welcome-seen");
+    if (!seen) setShowWelcome(true);
   }, []);
 
+  function closeWelcome() {
+    setShowWelcome(false);
+    window.localStorage.setItem("melenitasdle:welcome-seen", "1");
+  }
+
+  /* --------------------------- sonido (sfx) ----------------------------- */
   // Lista de sonidos de las carpetas public/sounds/{aciertos,fallos}.
   useEffect(() => {
     fetch("/api/sounds")
@@ -126,17 +165,23 @@ export default function Game() {
       .catch(() => {});
   }, []);
 
-  // Volúmenes guardados (clips y efectos).
+  // Volúmenes guardados (clips y efectos). Solo si hay valor guardado.
   useEffect(() => {
-    const cv = Number(window.localStorage.getItem("melenitasdle:vol:clips"));
-    const sv = Number(window.localStorage.getItem("melenitasdle:vol:sfx"));
-    if (Number.isFinite(cv) && cv >= 0 && cv <= 1) {
-      setClipVolume(cv);
-      clipVolumeRef.current = cv;
+    const rawCv = window.localStorage.getItem("melenitasdle:vol:clips");
+    const rawSv = window.localStorage.getItem("melenitasdle:vol:sfx");
+    if (rawCv !== null) {
+      const cv = Number(rawCv);
+      if (Number.isFinite(cv) && cv >= 0 && cv <= 1) {
+        setClipVolume(cv);
+        clipVolumeRef.current = cv;
+      }
     }
-    if (Number.isFinite(sv) && sv >= 0 && sv <= 1) {
-      setSfxVolumeState(sv);
-      setSfxVolume(sv);
+    if (rawSv !== null) {
+      const sv = Number(rawSv);
+      if (Number.isFinite(sv) && sv >= 0 && sv <= 1) {
+        setSfxVolumeState(sv);
+        setSfxVolume(sv);
+      }
     }
   }, []);
 
@@ -151,15 +196,6 @@ export default function Game() {
     setSfxVolumeState(v);
     setSfxVolume(v);
     window.localStorage.setItem("melenitasdle:vol:sfx", String(v));
-  }
-
-  function toggleSound() {
-    setSoundOn((prev) => {
-      const next = !prev;
-      setSfxMuted(!next);
-      window.localStorage.setItem("melenitasdle:sound", next ? "1" : "0");
-      return next;
-    });
   }
 
   // Solo efecto visual (shake / pulso). El sonido se decide en cada caso.
@@ -187,6 +223,128 @@ export default function Game() {
     flashFeedback("error");
     playError();
   }
+
+  /* ----------------------- Twitch / modo streamer ----------------------- */
+  // Procesa cada mensaje del chat: cuenta un voto por persona (última letra vale).
+  const handleChatMessage = useCallback((user: string, message: string) => {
+    if (!streamerModeRef.current || !pollActiveRef.current) return;
+    const m = message.trim().toUpperCase().match(/^!?\s*([A-Z])\s*[.!]*$/);
+    if (!m) return;
+    const idx = m[1].charCodeAt(0) - 65;
+    if (idx < 0 || idx >= pollLenRef.current) return;
+    votesRef.current.set(user, idx); // un voto por persona (la última letra cuenta)
+  }, []);
+
+  function connectTwitch(channel: string) {
+    const ch = channel.trim().toLowerCase().replace(/^#/, "");
+    if (!ch) return;
+    twitchRef.current?.disconnect();
+    const chat = new TwitchChat(ch, handleChatMessage, (s) => {
+      setTwitchStatus(s);
+      if (s === "connected") notify("success", `Conectado al chat de ${ch}`);
+    });
+    twitchRef.current = chat;
+    setTwitchChannel(ch);
+    chat.connect();
+    setShowTwitchModal(false);
+  }
+
+  function disconnectTwitch() {
+    twitchRef.current?.disconnect();
+    twitchRef.current = null;
+    setTwitchStatus("idle");
+    playerRef.current?.stop();
+    setPlaying(false);
+    setStreamerMode(false);
+    setStreamerStarted(false);
+    setPollActive(false);
+    setPollRevealed(false);
+  }
+
+  useEffect(() => {
+    return () => twitchRef.current?.disconnect();
+  }, []);
+
+  // Recuento de votos en vivo mientras la encuesta está abierta.
+  useEffect(() => {
+    if (!pollActive) return;
+    const id = setInterval(() => {
+      const counts = new Array(pollLenRef.current).fill(0);
+      for (const v of votesRef.current.values()) counts[v] = (counts[v] ?? 0) + 1;
+      setVoteCounts(counts);
+    }, 250);
+    return () => clearInterval(id);
+  }, [pollActive]);
+
+  function buildPoll(answer: string): PollOption[] {
+    const distractors = shuffle(
+      modeAnswers.filter((a) => a !== answer),
+    ).slice(0, Math.max(2, pollSize - 1));
+    const texts = shuffle([answer, ...distractors]);
+    return texts.map((text, i) => ({
+      letter: String.fromCharCode(65 + i),
+      text,
+      correct: text === answer,
+    }));
+  }
+
+  function startStreamerRound() {
+    const candidates = pool();
+    if (candidates.length === 0) return;
+    const next = randomItem(candidates);
+    votesRef.current = new Map();
+    const opts = buildPoll(next.answer);
+    setPoll(opts);
+    setVoteCounts(new Array(opts.length).fill(0));
+    setPollRevealed(false);
+    setChatCorrect(null);
+    setStreamerSegment(0);
+    setStreamerStarted(true);
+    playerRef.current?.stop();
+    setClip(next);
+    setRoundId((r) => r + 1);
+    setPollActive(true);
+    setPlaying(false);
+  }
+
+  function streamerPlay() {
+    const p = playerRef.current;
+    if (!p || !playerReady) return;
+    const seconds = DURATIONS[streamerSegment];
+    setPlaying(true);
+    p.play(seconds, segmentStartRef.current).catch(() => {});
+    window.setTimeout(() => setPlaying(false), seconds * 1000);
+  }
+
+  function streamerSkip() {
+    setStreamerSegment((s) => Math.min(s + 1, MAX_ATTEMPTS - 1));
+  }
+
+  function streamerReveal() {
+    // Recuento final desde el mapa de votos.
+    const counts = new Array(poll.length).fill(0);
+    for (const v of votesRef.current.values()) counts[v] = (counts[v] ?? 0) + 1;
+    setVoteCounts(counts);
+    const max = Math.max(...counts, 0);
+    const winner = max > 0 ? counts.indexOf(max) : -1;
+    const correct = winner >= 0 && poll[winner]?.correct;
+    setPollActive(false);
+    setPollRevealed(true);
+    setChatCorrect(correct);
+    setChatRounds((r) => r + 1);
+    if (correct) {
+      setChatWins((w) => w + 1);
+      winFeedback();
+    } else {
+      loseFeedback();
+    }
+    playFull();
+  }
+
+  const pollWinner = (() => {
+    const max = Math.max(...voteCounts, 0);
+    return max > 0 ? voteCounts.indexOf(max) : -1;
+  })();
 
   /* -------------------------- carga de catálogo ------------------------- */
   const loadCatalog = useCallback(() => {
@@ -252,6 +410,8 @@ export default function Game() {
           if (cancelled) return;
           segmentStartRef.current = randomStart(duration, MAX_SECONDS);
           player!.setVolume(clipVolumeRef.current);
+          // Precarga el tramo exacto para que el primer play suene al instante.
+          player!.preloadSegment?.(segmentStartRef.current);
           setPlayerReady(true);
         })
         .catch(() => {
@@ -274,7 +434,7 @@ export default function Game() {
     if (!playerName.trim()) return;
     const candidates = pool();
     if (candidates.length === 0) return;
-    const next = daily ? dailyClip(candidates) : randomItem(candidates);
+    const next = randomItem(candidates);
     // Detiene cualquier reproducción en curso (p. ej. el clip completo revelado).
     playerRef.current?.stop();
     setClip(next);
@@ -289,6 +449,8 @@ export default function Game() {
   const currentIndex = Math.min(attempts.length, MAX_ATTEMPTS - 1);
   const finished = status === "won" || status === "lost";
   const unlockedSeconds = finished ? MAX_SECONDS : DURATIONS[currentIndex];
+  // El escenario se revela al terminar (normal) o al revelar la encuesta (streamer).
+  const revealed = finished || (streamerMode && pollRevealed);
 
   async function playClip() {
     const p = playerRef.current;
@@ -377,7 +539,6 @@ export default function Game() {
           player: playerName.trim(),
           score: totalScore,
           mode,
-          daily,
         }),
       });
       if (!res.ok) throw new Error("save failed");
@@ -440,24 +601,34 @@ export default function Game() {
             Melenitas<span className="dot">dle</span>
           </div>
           <nav className="nav">
-            <a href="#partida">Jugar</a>
-            <a href="#ranking">Ranking</a>
             <button
               type="button"
               className="icon-btn"
-              onClick={toggleSound}
-              aria-label={soundOn ? "Silenciar sonidos" : "Activar sonidos"}
-              title={soundOn ? "Silenciar sonidos" : "Activar sonidos"}
+              onClick={() => setShowWelcome(true)}
+              aria-label="Instrucciones"
+              title="Instrucciones"
             >
-              {soundOn ? (
-                <VolumeIcon size={18} />
-              ) : (
-                <VolumeMuteIcon size={18} />
-              )}
+              <InfoIcon size={18} />
             </button>
-            <a className="cta" href="#partida">
-              Empezar
-            </a>
+            {twitchStatus === "connected" ? (
+              <button
+                type="button"
+                className="twitch-chip"
+                onClick={disconnectTwitch}
+                title="Desconectar"
+              >
+                <TwitchIcon size={15} /> {twitchChannel}
+                <span className="dot-live" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="twitch-cta"
+                onClick={() => setShowTwitchModal(true)}
+              >
+                <TwitchIcon size={16} /> Conectar Twitch
+              </button>
+            )}
           </nav>
         </div>
       </header>
@@ -501,6 +672,12 @@ export default function Game() {
           </div>
         </section>
 
+        <div className="game-layout">
+        {/* Ranking (columna izquierda, a la altura de la partida) */}
+        <aside id="ranking" className="ranking-side">
+          <Leaderboard refreshKey={lbKey} />
+        </aside>
+
         {/* Panel de partida (ventana) */}
         <section id="partida" className="game-wrap fade">
           <div className={`window ${feedback ? `fb-${feedback}` : ""}`}>
@@ -519,22 +696,41 @@ export default function Game() {
                 {MODES.map((m) => (
                   <button
                     key={m.id}
-                    className={`mode-tab ${mode === m.id ? "active" : ""}`}
+                    className={`mode-tab mode-${m.id} ${
+                      mode === m.id ? "active" : ""
+                    }`}
                     disabled={status === "playing"}
-                    onClick={() => setMode(m.id)}
+                    onClick={() => {
+                      playerRef.current?.stop();
+                      setPlaying(false);
+                      setStreamerMode(false);
+                      setStreamerStarted(false);
+                      setPollActive(false);
+                      setPollRevealed(false);
+                      setMode(m.id);
+                      if (m.id === "plagiosdev") setShowPlagiosNotice(true);
+                    }}
                   >
                     {m.label}
                   </button>
                 ))}
-                <label className="toggle">
-                  <input
-                    type="checkbox"
-                    checked={daily}
-                    disabled={status === "playing"}
-                    onChange={(e) => setDaily(e.target.checked)}
-                  />
-                  Modo diario
-                </label>
+                {twitchStatus === "connected" && (
+                  <button
+                    className={`mode-tab mode-streamer ${
+                      streamerMode ? "active" : ""
+                    }`}
+                    onClick={() => {
+                      playerRef.current?.stop();
+                      setPlaying(false);
+                      setStreamerMode((v) => !v);
+                      setStreamerStarted(false);
+                      setPollActive(false);
+                      setPollRevealed(false);
+                    }}
+                  >
+                    <LiveIcon size={13} /> Modo streamer
+                  </button>
+                )}
               </div>
 
               {/* Volúmenes: clips y efectos */}
@@ -569,27 +765,42 @@ export default function Game() {
                 </label>
               </div>
 
-              <div className="scorebar">
-                <div className="stat">
-                  <b>{totalScore}</b>
-                  <small>Puntos</small>
+              {streamerMode ? (
+                <div className="scorebar">
+                  <div className="stat">
+                    <b>{chatWins}</b>
+                    <small>Aciertos chat</small>
+                  </div>
+                  <div className="stat">
+                    <b>{chatRounds}</b>
+                    <small>Rondas</small>
+                  </div>
+                  <div className="stat">
+                    <b>{MODES.find((m) => m.id === mode)?.label}</b>
+                    <small>Modo</small>
+                  </div>
                 </div>
-                <div className="stat">
-                  <b>{rounds}</b>
-                  <small>Rondas</small>
+              ) : (
+                <div className="scorebar">
+                  <div className="stat">
+                    <b>{totalScore}</b>
+                    <small>Puntos</small>
+                  </div>
+                  <div className="stat">
+                    <b>{rounds}</b>
+                    <small>Rondas</small>
+                  </div>
+                  <div className="stat">
+                    <b>{MODES.find((m) => m.id === mode)?.label}</b>
+                    <small>Modo</small>
+                  </div>
                 </div>
-                <div className="stat">
-                  <b>
-                    {daily ? "Diario" : MODES.find((m) => m.id === mode)?.label}
-                  </b>
-                  <small>Modo</small>
-                </div>
-              </div>
+              )}
 
               {/* Escenario: tapa opaca mientras se juega; se revela al terminar */}
-              <div className={`stage ${finished ? "revealed" : ""}`}>
+              <div className={`stage ${revealed ? "revealed" : ""}`}>
                 <div className="player-host" ref={hostRef} />
-                {!finished && (
+                {!revealed && (
                   <div className="cover">
                     <div className={`disc ${playing ? "spin" : ""}`}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -629,7 +840,7 @@ export default function Game() {
         )}
 
         {/* Estado inicial: nombre obligatorio para el ranking */}
-        {status === "ready" && !poolEmpty && (
+        {status === "ready" && !poolEmpty && !streamerMode && (
           <div className="start-panel">
             <label className="field-label" htmlFor="playername">
               Tu nombre para el ranking
@@ -663,8 +874,121 @@ export default function Game() {
           </div>
         )}
 
+        {/* ---------------------- MODO STREAMER ---------------------- */}
+        {streamerMode && !poolEmpty && (
+          <div className="streamer">
+            <div className="streamer-live">
+              <span className="live-badge">
+                <LiveIcon size={13} /> EN DIRECTO
+              </span>
+              <span className="live-channel">
+                <TwitchIcon size={14} /> {twitchChannel}
+              </span>
+              <span className="live-votes">
+                <UsersIcon size={14} />{" "}
+                {voteCounts.reduce((a, b) => a + b, 0)} votos
+              </span>
+            </div>
+
+            {!streamerStarted ? (
+              <>
+                <p className="streamer-help">
+                  El chat adivina el clip. Elige cuántas opciones tendrá la
+                  encuesta y empieza la ronda. El público vota escribiendo la
+                  letra (A, B, C…) en el chat.
+                </p>
+                <div className="pollsize">
+                  <span className="field-label">Opciones:</span>
+                  {[3, 4, 5, 6].map((n) => (
+                    <button
+                      key={n}
+                      className={`pill ${pollSize === n ? "active" : ""}`}
+                      onClick={() => setPollSize(n)}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  className="btn btn-primary btn-block"
+                  onClick={startStreamerRound}
+                >
+                  <PlayIcon size={18} /> Empezar ronda del chat
+                </button>
+              </>
+            ) : (
+              <>
+                {statusLine()}
+                <StreamerPoll
+                  options={poll}
+                  counts={voteCounts}
+                  revealed={pollRevealed}
+                  winner={pollWinner}
+                />
+
+                {pollRevealed ? (
+                  <div
+                    className={`streamer-result ${
+                      chatCorrect ? "win" : "lose"
+                    }`}
+                  >
+                    <b>{chatCorrect ? "¡El chat acertó!" : "El chat falló"}</b>
+                    <span>
+                      Respuesta: {poll.find((o) => o.correct)?.text}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="streamer-controls">
+                    <button
+                      className="btn grow"
+                      onClick={streamerPlay}
+                      disabled={!playerReady || playing}
+                    >
+                      {!playerReady ? (
+                        <>
+                          <SpinnerIcon size={16} /> Preparando…
+                        </>
+                      ) : (
+                        <>
+                          <PlayIcon size={16} /> Reproducir{" "}
+                          {DURATIONS[streamerSegment]}s
+                        </>
+                      )}
+                    </button>
+                    <button
+                      className="btn"
+                      onClick={streamerSkip}
+                      disabled={streamerSegment >= MAX_ATTEMPTS - 1}
+                    >
+                      <SkipIcon size={15} /> +
+                      {DURATIONS[Math.min(streamerSegment + 1, MAX_ATTEMPTS - 1)]}s
+                    </button>
+                  </div>
+                )}
+
+                <div style={{ height: 12 }} />
+                {pollRevealed ? (
+                  <button
+                    className="btn btn-primary btn-block"
+                    onClick={startStreamerRound}
+                  >
+                    Siguiente clip <ArrowRightIcon size={16} />
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-primary btn-block"
+                    onClick={streamerReveal}
+                  >
+                    <EyeIcon size={16} /> Revelar resultado
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
         {/* Juego en curso / terminado */}
-        {(status === "playing" || finished) && (
+        {!streamerMode && (status === "playing" || finished) && (
           <>
             {statusLine()}
 
@@ -828,12 +1152,62 @@ export default function Game() {
             </div>
           </div>
         </section>
-
-        {/* Ranking */}
-        <section id="ranking" className="ranking-section">
-          <Leaderboard refreshKey={lbKey} />
-        </section>
+        </div>
       </main>
+
+      <WelcomeModal open={showWelcome} onClose={closeWelcome} />
+
+      <Modal
+        open={showTwitchModal}
+        onClose={() => setShowTwitchModal(false)}
+        title="Conectar con Twitch"
+        icon={<TwitchIcon size={22} />}
+        actionLabel="Cerrar"
+      >
+        <p>
+          Escribe tu <strong>canal de Twitch</strong> para que el chat pueda
+          jugar en el modo streamer. Solo se lee el chat (no hace falta iniciar
+          sesión).
+        </p>
+        <div className="guess" style={{ marginTop: 14 }}>
+          <input
+            type="text"
+            placeholder="tu_canal"
+            value={channelInput}
+            onChange={(e) => setChannelInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") connectTwitch(channelInput);
+            }}
+          />
+        </div>
+        {twitchStatus === "connecting" && (
+          <div className="statusline" style={{ marginTop: 10 }}>
+            <SpinnerIcon size={16} /> Conectando…
+          </div>
+        )}
+        <div style={{ height: 12 }} />
+        <button
+          className="btn btn-primary btn-block"
+          onClick={() => connectTwitch(channelInput)}
+          disabled={!channelInput.trim()}
+        >
+          <TwitchIcon size={16} /> Conectar
+        </button>
+      </Modal>
+
+      <Modal
+        open={showPlagiosNotice}
+        onClose={() => setShowPlagiosNotice(false)}
+        title="Aviso — Modo Plagios Dev"
+        icon={<AlertIcon size={22} />}
+      >
+        <p>
+          Los vídeos de este modo son del canal de <strong>RiseDev</strong>,{" "}
+          <strong>CentusDev</strong> y vídeos del grupo{" "}
+          <strong>Plagios Dev</strong> que <strong>no están públicos</strong> y
+          pertenecen al grupo.
+        </p>
+      </Modal>
 
       <Toasts toasts={toasts} />
       <Confetti fire={confettiFire} />

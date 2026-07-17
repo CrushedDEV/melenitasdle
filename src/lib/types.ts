@@ -3,14 +3,19 @@
 /** Plataforma de origen del clip. */
 export type ClipType = "twitch" | "youtube";
 
-/** Modo de juego: una plataforma concreta o ambas mezcladas. */
-export type GameMode = "twitch" | "youtube" | "mixed";
+/** Modo de juego: plataforma, mezcla, o la colección Plagios Dev. */
+export type GameMode = "twitch" | "youtube" | "mixed" | "plagiosdev";
+
+/** Colección a la que pertenece un clip. */
+export type ClipCollection = "main" | "plagiosdev";
 
 export interface Clip {
   /** Identificador único del clip. */
   id: string;
   /** Plataforma de origen. */
   type: ClipType;
+  /** Colección: "main" (Twitch/YouTube/Mixto) o "plagiosdev". Por defecto "main". */
+  collection?: ClipCollection;
   /** Respuesta correcta (lo que el jugador debe adivinar). */
   answer: string;
   /**

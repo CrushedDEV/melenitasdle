@@ -15,6 +15,8 @@ export interface ClipPlayer {
   playFull(): Promise<void>;
   /** Ajusta el volumen (0..1). Puede llamarse antes o después de `ready`. */
   setVolume(v: number): void;
+  /** Precarga (bufferiza) el tramo que se va a reproducir, para que suene al instante. */
+  preloadSegment?(from: number): void;
   /** Detiene la reproducción inmediatamente. */
   stop(): void;
   /** Libera el reproductor y limpia el DOM. */
@@ -49,6 +51,8 @@ class YouTubePlayer implements ClipPlayer {
   readonly ready: Promise<void>;
   private timer: ReturnType<typeof setTimeout> | null = null;
   private start: number;
+  private gen = 0; // invalida esperas/precargas obsoletas
+  private destroyed = false;
 
   constructor(container: HTMLElement, videoId: string, start = 0) {
     this.start = start;
@@ -76,9 +80,34 @@ class YouTubePlayer implements ClipPlayer {
     );
   }
 
+  private clearTimer() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+  }
+
+  // Espera a que el reproductor esté realmente REPRODUCIENDO (estado 1).
+  private waitPlaying(myGen: number): Promise<void> {
+    return new Promise((resolve) => {
+      const started = Date.now();
+      const check = () => {
+        if (this.destroyed || myGen !== this.gen) return resolve();
+        let state = -1;
+        try {
+          state = this.player.getPlayerState();
+        } catch {
+          /* noop */
+        }
+        if (state === 1 || Date.now() - started > 4000) return resolve();
+        setTimeout(check, 60);
+      };
+      check();
+    });
+  }
+
   async getDuration(): Promise<number> {
     await this.ready;
-    // getDuration puede devolver 0 hasta que carga metadata: reintentamos.
     for (let i = 0; i < 6; i++) {
       const d = Number(this.player.getDuration?.() ?? 0);
       if (d > 0) return d;
@@ -87,11 +116,40 @@ class YouTubePlayer implements ClipPlayer {
     return 0;
   }
 
+  // Precarga: reproduce muteado en el tramo para bufferizar, y pausa. Así el
+  // primer play real suena al instante (antes se perdía por el buffering).
+  preloadSegment(from: number): void {
+    this.start = from;
+    this.ready.then(async () => {
+      if (this.destroyed) return;
+      const myGen = ++this.gen;
+      try {
+        this.player.mute();
+        this.player.seekTo(from, true);
+        this.player.playVideo();
+        await this.waitPlaying(myGen);
+        if (myGen !== this.gen || this.destroyed) return;
+        this.player.pauseVideo();
+        this.player.seekTo(from, true);
+      } catch {
+        /* noop */
+      }
+    });
+  }
+
   async play(seconds: number, from?: number): Promise<void> {
     await this.ready;
-    this.stop();
+    const myGen = ++this.gen;
+    this.clearTimer();
+    try {
+      this.player.unMute();
+    } catch {
+      /* noop */
+    }
     this.player.seekTo(from ?? this.start, true);
     this.player.playVideo();
+    await this.waitPlaying(myGen);
+    if (myGen !== this.gen || this.destroyed) return;
     this.timer = setTimeout(() => {
       try {
         this.player.pauseVideo();
@@ -103,8 +161,13 @@ class YouTubePlayer implements ClipPlayer {
 
   async playFull(): Promise<void> {
     await this.ready;
-    this.stop();
-    // YouTube (Shorts incluidos): reproducimos el vídeo entero desde el inicio.
+    ++this.gen;
+    this.clearTimer();
+    try {
+      this.player.unMute();
+    } catch {
+      /* noop */
+    }
     this.player.seekTo(0, true);
     this.player.playVideo();
   }
@@ -121,10 +184,8 @@ class YouTubePlayer implements ClipPlayer {
   }
 
   stop(): void {
-    if (this.timer) {
-      clearTimeout(this.timer);
-      this.timer = null;
-    }
+    ++this.gen;
+    this.clearTimer();
     try {
       this.player?.pauseVideo();
     } catch {
@@ -133,6 +194,7 @@ class YouTubePlayer implements ClipPlayer {
   }
 
   destroy(): void {
+    this.destroyed = true;
     this.stop();
     try {
       this.player?.destroy();
@@ -315,6 +377,18 @@ class NativeMediaPlayer implements ClipPlayer {
 
   setVolume(v: number): void {
     this.video.volume = Math.max(0, Math.min(1, v));
+  }
+
+  preloadSegment(from: number): void {
+    this.start = from;
+    this.ready.then(() => {
+      try {
+        // Posiciona el vídeo en el tramo para que bufferice esa zona.
+        this.video.currentTime = from;
+      } catch {
+        /* noop */
+      }
+    });
   }
 
   stop(): void {

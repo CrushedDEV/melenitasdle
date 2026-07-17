@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     daily?: unknown;
   };
 
-  const validModes: GameMode[] = ["twitch", "youtube", "mixed"];
+  const validModes: GameMode[] = ["twitch", "youtube", "mixed", "plagiosdev"];
   if (
     typeof player !== "string" ||
     player.trim().length === 0 ||
