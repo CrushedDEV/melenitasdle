@@ -274,6 +274,64 @@ const RAW_CLIPS: RawClip[] = [
     answer: "Día 1 creando mi MARCA DE ROPA para PROGRAMADORES",
   },
 
+  // --- nuevos (oct 2026) ---
+  {
+    url: "https://www.youtube.com/shorts/ThoB_MOOkZw",
+    answer: "Las TELARAÑAS de Marvel's Spider-Man NO se ENGANCHAN a las paredes",
+  },
+  {
+    url: "https://www.youtube.com/shorts/7TkFOAd1TsQ",
+    answer: "Este PAYASO solo se mueve CUANDO NO LO MIRAS",
+  },
+  {
+    url: "https://www.youtube.com/shorts/WwL1PCCtQO8",
+    answer: "publi. He CREADO un JUEGO completo con GPT-6 Astra usando AURA",
+  },
+  {
+    url: "https://www.youtube.com/shorts/Zh0U-JTIKhY",
+    answer: "Esto es MUCHO MÁS que una simple SILLA",
+  },
+  {
+    url: "https://www.youtube.com/shorts/8w0H3z43d5c",
+    answer: "Así uso ANIMACIONES PROCEDURALES en mi juego para animar personajes por CÓDIGO",
+  },
+  {
+    url: "https://www.youtube.com/shorts/EJd3OHgiT2s",
+    answer: "publi. ¿Cuál de estos 3 ALGORITMOS de PATHFINDING es mejor?",
+  },
+  {
+    url: "https://www.youtube.com/shorts/MNKeXYlcnl8",
+    answer: "¡Las BALAS en mi juego ATRAVIESAN las PAREDES!",
+  },
+  {
+    url: "https://www.youtube.com/shorts/LBFTVETKy7w",
+    answer: "No vuelvas a usar variables BOOL para controlar a tu personaje - Mejor usa MÁQUINAS de ESTADOS",
+  },
+  {
+    url: "https://www.youtube.com/shorts/3TMZVDXdkDE",
+    answer: "He creado el SISTEMA de AUDIO que Unity debería tener",
+  },
+  {
+    url: "https://www.youtube.com/shorts/v8MYp2e_2IY",
+    answer: "publi. Día 9 creando un VIDEOJUEGO con las IDEAS de mis SEGUIDORES",
+  },
+  {
+    url: "https://www.youtube.com/shorts/wM1hxuPekWA",
+    answer: "publi. Puedo crear un juego completo en Unity solo usando IA",
+  },
+  {
+    url: "https://www.youtube.com/shorts/0SqEMlSo7M8",
+    answer: "Ni se te ocurra DUPLICAR código cuando programes tu juego",
+  },
+  {
+    url: "https://www.youtube.com/shorts/Q-owfNhmYso",
+    answer: "He enfrentado a 10.632 SEGUIDORES en mis propios SQUID GAMES",
+  },
+  {
+    url: "https://www.youtube.com/shorts/YGraTSUTvEg",
+    answer: "He creado el JUEGO DEL CALAMAR pero solo para mis SEGUIDORES",
+  },
+
     //Clips twitch mele
 
         {
@@ -315,6 +373,327 @@ const RAW_CLIPS: RawClip[] = [
               {
     url: "https://www.twitch.tv/melenitasdev/clip/WealthyMoldyDiamondWow-nJcroIIy0yLXhXoP",
     answer: "me la agarras con la mano?",
+  },
+  // --- nuevos (oct 2026) ---
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/PluckyNiceWrenchWholeWheat-yzJQ69MTv4nUODiB",
+    answer: "Se puede ver el segundo exacto en que melenitas se rompe",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ScrumptiousSmoggyPlumChefFrank-f6bVwf-gjhB24uPP",
+    answer: "abuela",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/CulturedBumblingSandpiperDxCat-jA2WfUTimG84N-kK",
+    answer: "¿Me está oyendo algún francés?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/SucculentCrepuscularNuggetsNotATK-bbaCgakvjvg4TUJ7",
+    answer: "Cómo? Qué grande quién?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/BloodyInterestingSpaghettiDAESuppy-1Csx1Iq5R9aqhvJd",
+    answer: "pino",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/EagerPuzzledBatRitzMitz-IbvXA8_81oW-VMfY",
+    answer: "este hombre se qué???",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/BlueGoodShieldWoofer-0dQ4oBJ_q26DvLcr",
+    answer: "que comes qué?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/DifficultDeadPuddingHassanChop-_hd6pOcFogOCymHN",
+    answer: "96 promesa",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/SmallLittlePancakeShazBotstix-NQ73u_zeEyUUK71r",
+    answer: "el pibe volador en piruetas",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/GrossSmoothKumquat4Head-a-OtE-t320pOXBef",
+    answer: "Mele tiene razón?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/MildTolerantElephantWOOP-oN70u54FTe2vHFQ7",
+    answer: "mele deja la programacion",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/EmpathicNurturingPresidentKlappa-h2Qu-vgS5DVAMaX2",
+    answer: "Bong sostenido",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/GlutenFreeRenownedPandaTooSpicy-ssa5aSIVp1eNUmI9",
+    answer: "Recreando ASMR en un minuto",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/BrainyCulturedGarageStoneLightning-kZID44Q7-oawzWZI",
+    answer: "Ay qué susto!",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/HeartlessDeafLadiesPicoMause-B1dJolzjngnalGEz",
+    answer: "di tu frase",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/PiercingProtectiveFennelDerp-5Z92QavOb916eM9b",
+    answer: "ITALIA",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ImportantSnappyMochaDoritosChip-e4KX0zPAV5ZsDK1W",
+    answer: "A mí no me hables en friki",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/VainFineAlligatorRalpherZ-fcrgjRMws46GjWUB",
+    answer: "qué susto coño",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/TallColorfulMooseBigBrother--8UKHGZ1dfWcmcHn",
+    answer: "Lilo on stream",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/GenerousYawningOryxHassanChop-d-JKfFMGtssuYVPQ",
+    answer: "Melenitas hace de todo con los dedos",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/WittyDepressedLegArsonNoSexy-26E4sI_3xpQVHggM",
+    answer: "por que no se acaba ya la guerra?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/DistinctTastySpiderRlyTho-x-SvTWkR6HIAKoQP",
+    answer: "mele chisme?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ZealousPluckyMetalRiPepperonis-3fX4XDyf0FNT3v1g",
+    answer: "EL PSOE",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/AdorableLazyAsparagusCharlietheUnicorn-gHFoLeYzIZ3pW7Q-",
+    answer: "aparte tdh tiene ezquizofrenia",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/BusyColdBulgogiPogChamp-EZcD8mJuE6-inBI-",
+    answer: "QUE ENTRE VICENTEEEEE!!!!!!",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/CoweringCrunchyBoarDuDudu-3OongA8c2598kZy5",
+    answer: "komanche",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/EntertainingFineWaffleRuleFive-VHToYB84ZoHq53oc",
+    answer: "Paella de Pato (Nivek)",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ManlySpikyFinchShadyLulu-5lcUkYinNmvMy9Jc",
+    answer: "sustooooo",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/AlertMuddyCucumberFreakinStinkin-l9ODfWgKjGY7M2_M",
+    answer: "haaaaaa perdon",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ToughFaintOcelotPartyTime-d72BBn69gfbJpi9X",
+    answer: "bolas en las manos",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ChillyResilientJalapenoOhMyDog-CHCyfZEqhUwDcLj6",
+    answer: "Que susto",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/DarkHilariousTildeANELE-qz6r4O8Fbw-78h8x",
+    answer: "recreando mecanicas",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/SavoryBraveAnteaterPraiseIt-mkmmbs7U7cMSn5bL",
+    answer: "regalo",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/GentleHonorableStrawberryRitzMitz-hmOew48z8fUQmfqI",
+    answer: "es una marca de ropa",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/AmusedRespectfulTriangleDoggo-EWzqkfJlrtwfBf1C",
+    answer: "la que le ha caido",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/WittyDarkVultureSaltBae-ITl5j47EDULwOgso",
+    answer: "pato asesino de hermanos",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/YawningHungryEyeballYee-JQHXKeUqUY3aPq4F",
+    answer: "eva descuido parte 2",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/FantasticNaiveChowderSaltBae-j7g9w8tXwsajcsTi",
+    answer: "no sigue a rothiotome (ah mira)",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/TenderEndearingArtichokeBloodTrail-_u4C0TXzwHBrTtIH",
+    answer: "Risas que delatan",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/RockyVibrantCrabCharlietheUnicorn-gmUxbdxJOOsVM2H6",
+    answer: "levanta las manos",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/KnottyRelentlessFerretJKanStyle-q-Nrq1_UJr7OyhvL",
+    answer: "mele 🏳‍🌈",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/AgitatedCooperativeOcelotPicoMause-dzV1eDfRV-p4Sei1",
+    answer: "Éxito rotundo!",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/RelentlessPeacefulBaconCoolStoryBob-I7omRJrnBwx1B_Nw",
+    answer: "agarramela que me crece",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/PluckyYummyEagleTTours-WV8FlQn9FL7JvhlZ",
+    answer: "mi mami?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/DeadAgreeableRingSaltBae-rV-S_4rQtAqJD9t-",
+    answer: "casi lo conseguimos",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ResourcefulDelightfulPeachUnSane-9Ji2e3MuXB0tLFBP",
+    answer: "Litos ya me estas jodiendo",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/DifferentBlitheGarlicShazBotstix-cWG00rDuDrMJXdSm",
+    answer: "tirando beef a german",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/RefinedMoralPastaSMOrc-fl5B3ucLZWoh6NgL",
+    answer: "melenitas bugs",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ResilientEvilKimchiPrimeMe-nBiPfBZoiJHZGg6a",
+    answer: "Eva, búscate un trabajo",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ExuberantUninterestedSwanNinjaGrumpy-SVPDNNw7yIDgtnVE",
+    answer: "La mejor declaración de amor de la historia",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/FlaccidViscousLatteDendiFace-XkBNbpeOxYItDX-q",
+    answer: "eva gruñido",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/BitterYawningSangAliens-JAKX-Vz6RgDZ0x5J",
+    answer: "pero mele?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/InnocentSteamyPineappleUWot-iOK80snjqodIu4eo",
+    answer: "que pedazo paquete no?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ClearTemperedIguanaStinkyCheese-0Jc8hzD_Y6FiKOQd",
+    answer: "lenguaje de señas",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/PoorDeliciousHummingbirdKappaClaus-cTHgD3kjy5NNhlZR",
+    answer: "\"Chicos se me...\"",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/FlaccidLivelyWhaleArgieB8-giwvP2KGavOAV9dV",
+    answer: "Que va a pillar?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/MotionlessIntelligentWoodcockImGlitch-CxL-27vNcRBRdoLd",
+    answer: "enfado con el chat",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/FrigidRamshackleLadiesSuperVinlin-H5LANAlTMF5biRFq",
+    answer: "Soy machista",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/StupidMoralKleeFutureMan-BYVrO3z28NqcH4_o",
+    answer: "sustillo",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/GrossPopularNuggetsOhMyDog-8s0PaI6j4Gua92dY",
+    answer: "que bonito link",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ArbitraryCrypticGerbilHassanChop-nXsnzcoLQG5YgoWb",
+    answer: "Melenitas amenazado por un g",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/AlluringClearDiscKappaWealth-Mvsm8Iw5z3zfVtZI",
+    answer: "profesional en meter qué melenitas?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/CrypticElegantSoymilkSmoocherZ-plFboR16jS-GBQXj",
+    answer: "Paro cardíaco",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/GracefulDifferentKoalaPupper-fBR1enH-znLVIQYc",
+    answer: "Presumiendo de bachillerato",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ShakingEnthusiasticRavenVoteNay-SY-45EB7VAelF5h8",
+    answer: "eva envidia",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/PlausibleRelentlessDragonStrawBeary-GXyKqrljK5DNgZVF",
+    answer: "Fa-kings",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/BelovedHeartlessFrogMikeHogu-TX46yXtHSzGdWW8p",
+    answer: "duki se pasa a saludar",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/BumblingPluckyNarwhalDatSheffy-EEIh0PHaetZoSbMn",
+    answer: "Outer wilds pero multijugador",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/SteamyFlirtyOtterAMPEnergyCherry-5OMaQpKKIms1sxeP",
+    answer: "Tema principal del juego...",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/VivaciousPlumpLocustM4xHeh-Qt-YDBLTJq4dFA8Z",
+    answer: "Paro cardíaco x2",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/FamousAwkwardAlbatrossAllenHuhu-WfsJMC_fsWr-XA_R",
+    answer: "kevedo",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/SavoryCrackySeahorseCoolStoryBob-A_7e44kNrIJdeNUL",
+    answer: "Coooomooooooo?!??!?!?!?!?!",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/MushyIgnorantSnoodFunRun-82EGuz2_C7JHWbJf",
+    answer: "Me fui de cariñosas",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/BoredSilkyOryxGOWSkull-GRn9mrxMVKX_MdSX",
+    answer: "96 calvo",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/LovelySuspiciousHorseSuperVinlin-yA0Z9z78_74dnf6a",
+    answer: "Eva tiene más biceps que tú",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/InventiveObedientCheesecakeMVGame-aGSMdawzXS3Pv_XJ",
+    answer: "Que me recomiendas para la primera noche?",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/SpikyRichMartenKappaPride-bNa-ekwzHrRx50M9",
+    answer: "Me quiero comprar una moto",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/FuriousHilariousPig4Head-qirhL_nOI4zjpphm",
+    answer: "seguidor facha",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/PowerfulCredulousButterCharlietheUnicorn-2T6pF6wvdRYf9VH_",
+    answer: "Los sucesores de melenitas",
+  },
+  {
+    url: "https://www.twitch.tv/melenitasdev/clip/ObservantFriendlyPigDAESuppy-OHWo_M9BuYo2QxvD",
+    answer: "Mele unleashed",
   },
 
 
@@ -384,6 +763,20 @@ const PLAGIOS_DEV_CLIPS: RawClip[] = [
       {
     url: "https://www.youtube.com/watch?v=Uodhptcfiww",
     answer: "Rise - Hice un Videojuego IMPOSIBLE SIN EXPERIENCIA en 48 HORAS | GODOT GAME JAM DEVLOG",
+  },
+
+  // --- nuevos (oct 2026) ---
+  {
+    url: "https://www.youtube.com/watch?v=4e-IaSMZwvA",
+    answer: "Rise - Un SUSCRIPTOR volvió ADICTIVO un juego de SIMULADOR",
+  },
+  {
+    url: "https://www.youtube.com/watch?v=WY2q8X9b_jo",
+    answer: "Rise - ¿Por qué TRABAJAR en VIDEOJUEGOS es DIVERTIDO?",
+  },
+  {
+    url: "https://www.youtube.com/watch?v=v6n77xlrYX0",
+    answer: "Rise - ¿Por qué el 99% de los indies fracasa miserablemente?",
   },
 
     //Videos centus
@@ -546,6 +939,107 @@ const PLAGIOS_DEV_CLIPS: RawClip[] = [
   {
     url: "https://www.youtube.com/shorts/0ylip1h6J5s",
     answer: "Centus - Soy César y soy Desarrollador de Videojuegos 😋",
+  },
+  // --- nuevos (oct 2026) ---
+  {
+    url: "https://www.youtube.com/shorts/MLlhp5kr81E",
+    answer: "Centus - ESTE AGUJERO ES FALSO",
+  },
+  {
+    url: "https://www.youtube.com/shorts/XVrZlGTIlZ4",
+    answer: "Centus - ESTE PERSONAJE NO TIENE ESQUELETO",
+  },
+  {
+    url: "https://www.youtube.com/shorts/90dsM5FRe4I",
+    answer: "Centus - DORMÍ SOLO 1 HORA Y MEDIA",
+  },
+  {
+    url: "https://www.youtube.com/shorts/HHQDOQueFPw",
+    answer: "Centus - ZOMBIES TSUNAMI EN 3D",
+  },
+  {
+    url: "https://www.youtube.com/shorts/J3I2EQouZMA",
+    answer: "Centus - ESTOS LADRILLOS SON UNA IMAGEN",
+  },
+  {
+    url: "https://www.youtube.com/shorts/PdY-vOO7Ve4",
+    answer: "Centus - HAN METIDO MINECRAFT EN ESTOS JUEGOS",
+  },
+  {
+    url: "https://www.youtube.com/shorts/MNiASDD24uU",
+    answer: "Centus - LAS LUCES EN VIDEOJUEGOS NO SON REALES",
+  },
+  {
+    url: "https://www.youtube.com/shorts/W2h4yQuVToc",
+    answer: "Centus - POR QUÉ ESTE GOLPE ES UNA BASURA",
+  },
+  {
+    url: "https://www.youtube.com/shorts/zwruNgrabJg",
+    answer: "Centus - PLANTS VS ZOMBIES EN 3D",
+  },
+  {
+    url: "https://www.youtube.com/shorts/vhIYaLjqqa4",
+    answer: "Centus - ¿LOS COCHES DEL GTA 6 VUELCAN?",
+  },
+  {
+    url: "https://www.youtube.com/shorts/-XdnIwE7FO4",
+    answer: "Centus - COMO FUNCIONAN LAS CÁMARAS EN VIDEOJUEGOS",
+  },
+  {
+    url: "https://www.youtube.com/shorts/_7Wrmim4T28",
+    answer: "Centus - ¿POR QUÉ TE DAN SI ESTÁS OCULTO?",
+  },
+  {
+    url: "https://www.youtube.com/shorts/M4yzi5K2rMM",
+    answer: "Centus - ¿SABES EN REALIDAD QUE ES UNA HITBOX?",
+  },
+  {
+    url: "https://www.youtube.com/shorts/aXBwQrR-WAM",
+    answer: "Centus - ¿COMO SE SABE CUANDO HAS HECHO UN COMBO?",
+  },
+  {
+    url: "https://www.youtube.com/shorts/SneNTNXegdU",
+    answer: "Centus - UNA PILA HA SALVADO TU PARTIDA DE POKEMON",
+  },
+  {
+    url: "https://www.youtube.com/shorts/GBgDwVcaLh4",
+    answer: "Centus - LOS COCHES EN VIDEOJUEGOS SON ESFERAS",
+  },
+  {
+    url: "https://www.youtube.com/shorts/ydSJJxax8II",
+    answer: "Centus - NO SABES CÓMO SE ROMPEN LOS OBJETOS EN VIDEOJUEGOS",
+  },
+  {
+    url: "https://www.youtube.com/shorts/94Z3rKSpMsg",
+    answer: "Centus - COMO SE HUNDE LA NIEVE EN VIDEOJUEGOS",
+  },
+  {
+    url: "https://www.youtube.com/shorts/tqL19KOw_BQ",
+    answer: "Centus - ES IMPOSIBLE TENER MILES DE ÁRBOLES SIN EXPLOTAR",
+  },
+  {
+    url: "https://www.youtube.com/shorts/V6bE78BVLMo",
+    answer: "Centus - COMO CONSEGUÍ IR A ALEMANIA POR HACER VIDEOJUEGOS 🇩🇪",
+  },
+  {
+    url: "https://www.youtube.com/shorts/SCx3R_2nos0",
+    answer: "Centus - LOS MINIMAPAS EN VIDEOJUEGOS NO SON COMO PENSÁIS",
+  },
+  {
+    url: "https://www.youtube.com/shorts/lUEYK3jJtSA",
+    answer: "Centus - COMO LOS ALDEANOS DEL MINECRAFT VUELVEN A SUS CASA",
+  },
+  {
+    url: "https://www.youtube.com/shorts/cfkiLt257Jg",
+    answer: "Centus - EL GUARDADO DE PARTIDA EN VIDEOJUEGOS",
+  },
+  {
+    url: "https://www.youtube.com/shorts/5wGSYd80CJI",
+    answer: "Centus - HE CREADO UN JUEGO DE LA FINAL DEL MUNDIAL 🇪🇸🇦🇷",
+  },
+  {
+    url: "https://www.youtube.com/shorts/9iECpYxsLXk",
+    answer: "Centus - COMO HACEN PARKOUR EN JUEGOS COMO ASSASSINS CREED",
   },
 
 ];

@@ -39,7 +39,6 @@ import {
   PlayIcon,
   SkipIcon,
   SpinnerIcon,
-  TrophyIcon,
   VolumeIcon,
   ZapIcon,
   TwitchIcon,
@@ -367,6 +366,24 @@ export default function Game() {
     loadCatalog();
   }, [loadCatalog]);
 
+  // Cinta del hero: títulos reales del catálogo con las letras censuradas
+  // (solo la inicial de cada palabra), a modo de "pista" que no revela nada.
+  const ticker = useMemo(() => {
+    const censor = (t: string) =>
+      t
+        .replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}]/gu, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .split(" ")
+        .map((w) =>
+          w.length <= 2 ? w : w[0] + w.slice(1).replace(/[\p{L}\p{N}]/gu, "·"),
+        )
+        .join(" ");
+    return shuffle(allClips.map((c) => c.answer))
+      .slice(0, 16)
+      .map(censor);
+  }, [allClips]);
+
   // Respuestas del autocompletado SOLO del modo activo (Twitch/YouTube/Mixto).
   const modeAnswers = useMemo(() => {
     const set = new Set(clipsForMode(allClips, mode).map((c) => c.answer));
@@ -623,51 +640,47 @@ export default function Game() {
                 className="twitch-cta"
                 onClick={() => setShowTwitchModal(true)}
               >
-                <TwitchIcon size={16} /> Conectar Twitch
+                <TwitchIcon size={16} />
+                <span>
+                  <span className="hide-sm">Conectar </span>Twitch
+                </span>
               </button>
             )}
           </nav>
         </div>
       </header>
 
-      <main className="shell">
-        {/* Hero */}
+      <div className="shell">
+        {/* Hero: la funda del disco. El vinilo asoma por detrás del titular. */}
         <section className="hero">
-          <div className="hero-inner">
-            <div className="hero-copy">
-              <span className="kicker">
-                <GamepadIcon size={13} /> Juego musical
-              </span>
-              <h1 className="hero-title">
-                Melenitas<span className="dot">dle</span>
-              </h1>
-              <p className="hero-sub">
-                Escucha un fragmento del audio de un clip del creador y adivina
-                cuál es. Cada intento fallado te desvela más segundos, hasta{" "}
-                {MAX_SECONDS}.
-              </p>
-              <div className="hero-meta">
-                <span className="chip">
-                  <PlayIcon size={14} /> Audio progresivo
-                </span>
-                <span className="chip">
-                  <DotIcon size={14} /> {MAX_ATTEMPTS} intentos
-                </span>
-                <span className="chip">
-                  <TrophyIcon size={14} /> Ranking online
-                </span>
-              </div>
-            </div>
-            <div className="hero-art" aria-hidden="true">
-              <div className="art-card">
-                <div className="art-disc">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="hole" src="/melenitas.png" alt="" />
-                </div>
-              </div>
+          <div className="hero-vinyl" aria-hidden="true">
+            <div className="hero-vinyl-disc">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/melenitas.png" alt="" />
             </div>
           </div>
+          <h1 className="hero-title">
+            <span className="ht-line">Melenitas</span>
+            <span className="ht-line ht-accent">dle</span>
+          </h1>
+          <p className="hero-sub">
+            Medio segundo de audio, un clip del canal y una pregunta: ¿de cuál
+            es? Si no lo pillas, te dejamos escuchar un poquito más.
+          </p>
         </section>
+      </div>
+
+      {ticker.length > 0 && (
+        <div className="ticker" aria-hidden="true">
+          <div className="ticker-track">
+            {[...ticker, ...ticker].map((t, i) => (
+              <span key={i}>{t}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <main className="shell">
 
         <div className="game-layout">
         {/* Ranking (columna izquierda, a la altura de la partida) */}
@@ -679,13 +692,11 @@ export default function Game() {
         <section id="partida" className="game-wrap fade">
           <div className={`window ${feedback ? `fb-${feedback}` : ""}`}>
             <div className="window-bar">
-              <span className="dots">
-                <i />
-                <i />
-                <i />
+              <span className="side-label">cara A</span>
+              <span className="window-title">la partida</span>
+              <span className={`rpm ${playing ? "on" : ""}`}>
+                <i /> 33⅓
               </span>
-              <span className="window-title">Partida</span>
-              <span className="spacer" />
             </div>
             <div className="window-body">
               {/* Selección de modo */}
@@ -800,9 +811,17 @@ export default function Game() {
                 <div className="player-host" ref={hostRef} />
                 {!revealed && (
                   <div className="cover">
-                    <div className={`disc ${playing ? "spin" : ""}`}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img className="label" src="/melenitas.png" alt="Melenitas" />
+                    <div className="platter">
+                      <div className={`disc ${playing ? "spin" : ""}`}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img className="label" src="/melenitas.png" alt="Melenitas" />
+                      </div>
+                    </div>
+                    {/* Brazo del tocadiscos: baja sobre el disco mientras suena */}
+                    <div className={`tonearm ${playing ? "down" : ""}`}>
+                      <span className="tonearm-base" />
+                      <span className="tonearm-rod" />
+                      <span className="tonearm-head" />
                     </div>
                   </div>
                 )}

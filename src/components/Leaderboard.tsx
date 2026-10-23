@@ -34,29 +34,36 @@ export default function Leaderboard({ refreshKey }: { refreshKey: number }) {
 
   return (
     <div className="leaderboard">
-      <h3>
-        <span className="lb-title">
-          <TrophyIcon size={16} /> Mejores puntuaciones
-        </span>
-      </h3>
+      <div className="lb-head">
+        <span className="side-label">cara B</span>
+        <h3>
+          <span className="lb-title">
+            <TrophyIcon size={15} /> Los que más saben
+          </span>
+        </h3>
+      </div>
       {loading ? (
         <p className="muted center statusline">
           <SpinnerIcon size={16} /> Cargando…
         </p>
       ) : scores.length === 0 ? (
-        <p className="muted center">Aún no hay puntuaciones. ¡Sé el primero!</p>
+        <p className="lb-empty">
+          La tracklist está vacía. La primera canción la pones tú.
+        </p>
       ) : (
-        scores.map((s, i) => (
-          <div className="lb-row" key={s.id}>
-            <span className="rank">#{i + 1}</span>
-            <span>{s.player}</span>
-            <span className="tag">
-              {MODE_LABEL[s.mode] ?? s.mode}
-              {s.daily ? " · diario" : ""}
-            </span>
-            <span className="pts">{s.score}</span>
-          </div>
-        ))
+        <ol className="lb-list">
+          {scores.map((s, i) => (
+            <li className="lb-row" key={s.id}>
+              <span className="rank">{String(i + 1).padStart(2, "0")}</span>
+              <span className="lb-name">
+                {s.player}
+                <small>{MODE_LABEL[s.mode] ?? s.mode}</small>
+              </span>
+              <span className="lb-dots" aria-hidden="true" />
+              <span className="pts">{s.score}</span>
+            </li>
+          ))}
+        </ol>
       )}
     </div>
   );

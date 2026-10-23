@@ -1,0 +1,505 @@
+/* ======================================================================
+   Lavado de cara — concepto: la web es un tocadiscos.
+   Titular = funda del disco (con el vinilo asomando), partida = el plato
+   con su brazo, ranking = la contraportada con la tracklist.
+   Se carga después de globals.css y sobrescribe lo necesario.
+   ====================================================================== */
+
+/* Las variables --font-display / --font-serif / --font-body las define
+   next/font en <html> (ver layout.tsx). */
+
+body {
+  font-family: var(--font-body);
+  background:
+    radial-gradient(900px 520px at 85% 8%, rgba(209, 77, 77, 0.1), transparent 60%),
+    var(--bg);
+}
+
+/* Grano de papel/vinilo sobre toda la página (muy sutil). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+/* ------------------------------ Top bar -------------------------------- */
+.topbar {
+  background: rgba(33, 32, 32, 0.78);
+}
+.logo {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.35rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.logo .dot {
+  font-family: var(--font-serif);
+  font-style: italic;
+  text-transform: none;
+  font-size: 1.15em;
+  margin-left: 1px;
+}
+.logo .mark {
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--red) 0 28%, #111 29% 31%, #1a1919 32% 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.logo .mark svg {
+  display: none;
+}
+
+/* -------------------------------- Hero --------------------------------- */
+.hero {
+  position: relative;
+  padding: 56px 0 30px;
+  min-height: min(68vh, 640px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hero-title {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(4.4rem, 16vw, 14.5rem);
+  line-height: 0.84;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.ht-line {
+  display: block;
+  animation: line-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.ht-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  text-transform: none;
+  color: var(--red);
+  font-size: 0.92em;
+  line-height: 0.75;
+  margin-left: 0.42em;
+  animation-delay: 0.12s;
+}
+@keyframes line-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+    filter: blur(8px);
+  }
+}
+.hero-sub {
+  position: relative;
+  z-index: 2;
+  max-width: 34ch;
+  margin: 30px 0 0 0.3em;
+  padding-left: 16px;
+  border-left: 2px solid var(--red);
+  font-size: 1.08rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  animation: line-in 0.9s 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Vinilo saliendo de la funda, detrás de las letras. */
+.hero-vinyl {
+  position: absolute;
+  z-index: 1;
+  right: -6%;
+  top: 50%;
+  width: min(58vw, 600px);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  animation: vinyl-out 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.hero-vinyl-disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle, transparent 0 33%, rgba(255, 255, 255, 0.05) 33.5% 34%, transparent 34.5%),
+    repeating-radial-gradient(circle, #141313 0 2px, #1d1c1c 2px 4px),
+    #161515;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 40px 90px -40px rgba(0, 0, 0, 0.9);
+  animation: spin 9s linear infinite;
+}
+.hero-vinyl-disc::after {
+  /* reflejo de la luz sobre los surcos */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 30deg,
+    transparent 0 10%,
+    rgba(255, 255, 255, 0.07) 14%,
+    transparent 20% 60%,
+    rgba(255, 255, 255, 0.05) 64%,
+    transparent 70%
+  );
+}
+.hero-vinyl-disc img {
+  width: 33%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 6px var(--red), 0 0 0 7px #0d0c0c;
+}
+@keyframes vinyl-out {
+  from {
+    opacity: 0;
+    transform: translate(-28%, -50%) rotate(-40deg);
+  }
+}
+
+/* ------------------------------- Cinta --------------------------------- */
+.ticker {
+  position: relative;
+  z-index: 3;
+  overflow: hidden;
+  margin: 6px 0 46px;
+  padding: 11px 0;
+  background: var(--red);
+  color: #fff;
+  transform: rotate(-1.4deg);
+  box-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.9);
+}
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 70s linear infinite;
+}
+.ticker-track span {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  padding-right: 22px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ticker-track span::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 22%, #212020 24% 100%);
+}
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* --------------------------- Panel de partida --------------------------- */
+.window {
+  border-radius: 18px;
+  background: linear-gradient(180deg, #2a2828, #242323);
+}
+.window-bar {
+  justify-content: space-between;
+  padding: 12px 18px;
+}
+.side-label {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--red-bright);
+  line-height: 1;
+}
+.window-title {
+  flex: 0 1 auto;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.95rem;
+  letter-spacing: 0.16em;
+  color: var(--text);
+}
+.rpm {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+.rpm i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.rpm.on {
+  color: var(--text);
+}
+.rpm.on i {
+  background: var(--red);
+  box-shadow: 0 0 0 4px var(--red-glow);
+}
+
+/* ------------------------- Plato del tocadiscos ------------------------- */
+.stage {
+  border-radius: 14px;
+}
+.stage .cover {
+  background:
+    radial-gradient(120% 90% at 40% 50%, #2b2929 0%, #1a1919 70%),
+    #1a1919;
+}
+.platter {
+  position: absolute;
+  left: 40%;
+  top: 50%;
+  height: 84%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle, #121111 0 64%, #2e2c2c 65% 67%, #151414 68% 100%);
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.9);
+}
+.platter .disc {
+  width: 92%;
+  height: auto;
+  aspect-ratio: 1;
+  border: 0;
+  background:
+    repeating-radial-gradient(circle, #121111 0 1.5px, #1c1b1b 1.5px 3px);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+.platter .disc::before {
+  inset: 30%;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.platter .disc .label {
+  width: 36%;
+  height: auto;
+  aspect-ratio: 1;
+  box-shadow: 0 0 0 4px var(--red), 0 0 0 5px #0d0c0c;
+}
+
+/* Brazo: pivota desde la base; reposa fuera y baja al disco al sonar. */
+.tonearm {
+  position: absolute;
+  z-index: 3;
+  left: 78%;
+  top: 12%;
+  width: 0;
+  height: 60%;
+  transform-origin: top center;
+  transform: rotate(14deg);
+  transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+.tonearm.down {
+  transform: rotate(36deg);
+}
+.tonearm-base {
+  position: absolute;
+  left: -22px;
+  top: -22px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #6d6a6a 0 22%, #3a3838 24% 60%, #2a2828 62% 100%);
+  box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.9);
+}
+.tonearm-rod {
+  position: absolute;
+  left: -3px;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #8d8a8a, #d8d5d5 45%, #6f6c6c);
+}
+.tonearm-head {
+  position: absolute;
+  left: -9px;
+  bottom: -18px;
+  width: 18px;
+  height: 26px;
+  border-radius: 3px;
+  background: var(--red);
+  transform: rotate(-18deg);
+  box-shadow: 0 4px 8px -3px rgba(0, 0, 0, 0.8);
+}
+
+/* ------------------------------ Botones -------------------------------- */
+.btn-primary {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.mode-tab {
+  font-weight: 600;
+}
+
+/* ------------------------- Ranking = cara B ----------------------------- */
+.leaderboard {
+  border-radius: 18px;
+  padding: 16px 14px 12px;
+  background: linear-gradient(180deg, #2a2828, #242323);
+}
+.lb-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 4px 10px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.leaderboard h3 {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+.lb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lb-row {
+  grid-template-columns: 24px minmax(0, auto) 1fr auto;
+  gap: 8px;
+  padding: 8px 6px;
+}
+.lb-row .rank {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+.lb-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.lb-name small {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.lb-dots {
+  align-self: center;
+  height: 0;
+  border-bottom: 1px dotted var(--surface-3);
+  margin-top: 4px;
+}
+.lb-empty {
+  margin: 10px 4px 6px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+/* ------------------------- Bienvenida / Wordle -------------------------- */
+.welcome-hero h2,
+.wordle-head h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+}
+.welcome-hero h2 {
+  font-size: 2.4rem;
+}
+.wordle-head h1 {
+  font-size: clamp(2.4rem, 7vw, 4.2rem);
+}
+.welcome-hero h2 em,
+.wordle-head h1 em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  text-transform: none;
+  color: var(--red);
+}
+.tile,
+.key {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.key.wide {
+  font-family: var(--font-body);
+  font-weight: 700;
+}
+
+/* -------------------------------- Móvil -------------------------------- */
+.twitch-cta {
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .hide-sm {
+    display: none;
+  }
+  .logo {
+    font-size: 1.12rem;
+    gap: 8px;
+  }
+  .logo .mark {
+    width: 26px;
+    height: 26px;
+  }
+  .twitch-cta {
+    padding: 8px 12px;
+  }
+  .hero {
+    min-height: 0;
+    padding: 38px 0 22px;
+  }
+  .hero-vinyl {
+    right: -30%;
+    width: 78vw;
+    opacity: 0.75;
+  }
+  .ticker-track span {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ht-line,
+  .hero-sub,
+  .hero-vinyl,
+  .hero-vinyl-disc,
+  .ticker-track {
+    animation: none;
+  }
+  .tonearm {
+    transition: none;
+  }
+}

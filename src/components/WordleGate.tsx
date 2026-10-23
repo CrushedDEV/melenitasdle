@@ -110,8 +110,9 @@ export default function WordleGate({ onSolved }: { onSolved: () => void }) {
   return (
     <div className="wordle">
       <div className="wordle-head">
-        <span className="kicker">Acceso</span>
-        <h1>Adivina la palabra</h1>
+        <h1>
+          Primero, <em>la contraseña</em>
+        </h1>
         <p>
           Resuelve el Wordle para desbloquear <strong>Melenitasdle</strong>.
           <br />

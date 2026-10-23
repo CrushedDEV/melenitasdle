@@ -63,9 +63,10 @@ export default function WelcomeModal({ open, onClose }: Props) {
         <div className="welcome-hero">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/melenitas.png" alt="" className="welcome-logo" />
-          <span className="kicker">Bienvenido</span>
-          <h2>Melenitasdle</h2>
-          <p>Todo lo que necesitas saber antes de tu primera ronda.</p>
+          <h2>
+            Melenitas<em>dle</em>
+          </h2>
+          <p>Lo justo para no hacer el ridículo en tu primera ronda.</p>
         </div>
 
         <div className="welcome-list">
